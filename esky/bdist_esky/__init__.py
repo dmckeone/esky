@@ -308,7 +308,13 @@ class bdist_esky(Command):
         try:
             self._run()
         finally:
-            really_rmtree(self.tempdir)
+            try:
+                really_rmtree(self.tempdir)
+            except (IOError, WindowsError) as e:
+                print("Failed to remove \"{}\".  Error: {}".format(self.tempdir, e))
+                import traceback
+                traceback.print_exc(e)
+
 
     def _run(self):
         self._run_initialise_dirs()
